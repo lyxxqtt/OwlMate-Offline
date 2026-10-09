@@ -1,18 +1,5 @@
 # OwlMate Offline
 
-OwlMate Offline is an iOS app built for the AppBuildersPH Hackathon 2026 Local AI challenge. It is designed around the core idea that meaningful AI computation should happen on the user's device, not entirely in the cloud.
-
-This project is a private, offline study companion that helps students learn, summarize ideas, and ask questions without depending on a continuous internet connection.
-
-## Challenge alignment
-
-This app follows the Local AI theme from the AppBuildersPH Hackathon 2026 participant briefing:
-
-- Real problem: students need a study assistant that works even without internet access.
-- Local AI requirement: the app runs an on-device language model and keeps inference local.
-- Why it matters: local processing improves privacy, speed, and reliability when cloud services are unavailable.
-- Submission focus: the app demonstrates why AI is more useful when it runs locally.
-
 ## Project overview
 
 OwlMate Offline is a personal AI study buddy for mobile learning. It lets users:
