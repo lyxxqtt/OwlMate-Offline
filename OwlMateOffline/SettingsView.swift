@@ -9,6 +9,19 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    HStack(spacing: 14) {
+                        OwlMateLogo(size: 54)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("OwlMate Offline")
+                                .font(.title3.weight(.bold))
+                            Text("Private study, wherever you are.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
                 Section("Local AI") {
                     LabeledContent("Model", value: "Qwen2.5 0.5B Instruct")
                     LabeledContent("Status", value: statusText)
@@ -34,12 +47,10 @@ struct SettingsView: View {
                     .disabled(viewModel.conversations.isEmpty)
                 }
                 Section("About") {
-                    HStack {
-                        OwlMateLogo(size: 42)
-                        Text("OwlMate - Offline")
-                            .font(.headline)
-                    }
                     LabeledContent("Version", value: "1.0")
+                    Text("Built to keep your learning private and on-device.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             }
             .navigationTitle("Settings")

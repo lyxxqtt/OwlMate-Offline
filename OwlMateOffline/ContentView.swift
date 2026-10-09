@@ -71,25 +71,14 @@ private struct AppIntroView: View {
         ZStack {
             AppTheme.navy.ignoresSafeArea()
 
-            VStack(spacing: 18) {
-                OwlMateLogo(size: 112)
-                    .scaleEffect(isVisible ? 1 : 0.88)
-                    .opacity(isVisible ? 1 : 0)
-
-                VStack(spacing: 5) {
-                    Text("OwlMate")
-                        .font(.system(.largeTitle, design: .rounded).weight(.bold))
-                    Text("Offline study companion")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.72))
-                }
-                .foregroundStyle(.white)
+            // The first frame is intentionally only the official OwlMate artwork.
+            OwlMateLogo(size: 148)
+                .scaleEffect(isVisible ? 1 : 0.86)
                 .opacity(isVisible ? 1 : 0)
-            }
             .animation(.easeOut(duration: 0.45), value: isVisible)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("OwlMate Offline")
+        .accessibilityLabel("OwlMate logo")
     }
 }
 
@@ -100,17 +89,14 @@ private struct TutorialView: View {
 
     private let steps = [
         TutorialStep(
-            symbol: "bubble.left.and.bubble.right.fill",
             title: "Learn privately",
             message: "Ask questions and explore ideas with a study buddy that runs on your device."
         ),
         TutorialStep(
-            symbol: "clock.arrow.circlepath",
             title: "Keep every conversation",
             message: "Start separate chats for different topics, then return to your saved history whenever you need it."
         ),
         TutorialStep(
-            symbol: "lock.shield.fill",
             title: "Offline by design",
             message: "Your conversations stay on this iPhone. Once the model is set up, chat without an internet connection."
         )
@@ -121,23 +107,18 @@ private struct TutorialView: View {
             HStack {
                 Text("Welcome to OwlMate")
                     .font(.headline.weight(.semibold))
-                Spacer()
                 Button("Skip", action: finish)
                     .font(.subheadline.weight(.medium))
+                    .frame(minWidth: 56, minHeight: 44)
             }
             .padding(.horizontal, 22)
             .padding(.top, 18)
 
             TabView(selection: $page) {
                 ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                    VStack(spacing: 24) {
-                        Spacer()
-                        OwlMateLogo(size: 96)
-                        Image(systemName: step.symbol)
-                            .font(.system(size: 28, weight: .semibold))
-                            .foregroundStyle(AppTheme.accent)
-                            .frame(width: 62, height: 62)
-                            .background(AppTheme.lavenderSurface, in: Circle())
+                    VStack(spacing: 20) {
+                        Spacer(minLength: 24)
+
                         VStack(spacing: 10) {
                             Text(step.title)
                                 .font(.title2.weight(.bold))
@@ -149,7 +130,8 @@ private struct TutorialView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                                 .padding(.horizontal, 28)
                         }
-                        Spacer()
+
+                        Spacer(minLength: 24)
                     }
                     .tag(index)
                 }
@@ -158,23 +140,28 @@ private struct TutorialView: View {
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: page)
 
             HStack(spacing: 12) {
-                if page > 0 {
-                    Button("Back") {
-                        page -= 1
-                    }
-                    .buttonStyle(.bordered)
+                Button {
+                    page -= 1
+                } label: {
+                    Text("Back")
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.bordered)
+                .disabled(page == 0)
 
-                Button(page == steps.count - 1 ? "Get Started" : "Next") {
+                Button {
                     if page == steps.count - 1 {
                         finish()
                     } else {
                         page += 1
                     }
+                } label: {
+                    Text(page == steps.count - 1 ? "Get Started" : "Next")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
             }
+            .frame(height: 50)
             .padding(.horizontal, 22)
             .padding(.bottom, 20)
         }
@@ -183,7 +170,6 @@ private struct TutorialView: View {
 }
 
 private struct TutorialStep {
-    let symbol: String
     let title: String
     let message: String
 }

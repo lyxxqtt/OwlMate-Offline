@@ -11,13 +11,13 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     HomeBrandHeader()
-                        .padding(.bottom, 42)
+                        .padding(.bottom, 30)
 
                     HomeHero()
-                        .padding(.bottom, 25)
+                        .padding(.bottom, 22)
 
                     AskOwlMateCard(action: onAskOwlMate)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, 28)
 
                     StarterPrompts { prompt in
                         onSelectSuggestion(prompt)
@@ -36,7 +36,14 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
-            .background(AppTheme.homeBackground.ignoresSafeArea())
+            .background {
+                LinearGradient(
+                    colors: [AppTheme.homeBackground, AppTheme.lavender.opacity(0.18), AppTheme.homeBackground],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea()
+            }
             .navigationBarHidden(true)
             .task {
                 await modelManager.refresh()
@@ -51,7 +58,12 @@ private struct HomeBrandHeader: View {
             OwlMateLogo(size: 62)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text("OwlMate - Offline")
+                Text(greeting)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppTheme.accent)
+                    .textCase(.uppercase)
+                    .tracking(0.8)
+                Text("OwlMate")
                     .font(.title2.weight(.bold))
                     .foregroundStyle(.primary)
                 Text("Your personal AI study buddy. Anytime. Anywhere.")
@@ -63,11 +75,24 @@ private struct HomeBrandHeader: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("OwlMate Offline, your personal AI study buddy")
     }
+
+    private var greeting: String {
+        switch Calendar.current.component(.hour, from: .now) {
+        case 5..<12: "Good morning"
+        case 12..<18: "Good afternoon"
+        default: "Good evening"
+        }
+    }
 }
 
 private struct HomeHero: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 11) {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("WHAT'S ON YOUR MIND?")
+                .font(.caption.weight(.bold))
+                .foregroundStyle(AppTheme.accent)
+                .tracking(1.1)
+
             Text("What are we learning today?")
                 .font(.system(.largeTitle, design: .rounded).weight(.bold))
                 .foregroundStyle(.primary)
@@ -77,6 +102,15 @@ private struct HomeHero: View {
                 .font(.title3)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 8) {
+                Image(systemName: "lock.fill")
+                Text("Private by design")
+                Circle().frame(width: 3, height: 3)
+                Text("Works offline")
+            }
+            .font(.caption.weight(.medium))
+            .foregroundStyle(.secondary)
         }
     }
 }
@@ -107,7 +141,23 @@ private struct AskOwlMateCard: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 21)
             .padding(.vertical, 22)
-            .background(AppTheme.navy, in: RoundedRectangle(cornerRadius: 25, style: .continuous))
+            .background {
+                LinearGradient(
+                    colors: [AppTheme.navy, AppTheme.navy.opacity(0.82)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+            }
+            .overlay(alignment: .topTrailing) {
+                Circle()
+                    .fill(.white.opacity(0.08))
+                    .frame(width: 100, height: 100)
+                    .offset(x: 30, y: -48)
+                    .allowsHitTesting(false)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+            .shadow(color: AppTheme.navy.opacity(0.18), radius: 16, y: 8)
             .scaleEffect(isPressed ? 0.98 : 1)
         }
         .buttonStyle(.plain)

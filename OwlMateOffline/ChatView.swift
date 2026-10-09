@@ -180,7 +180,7 @@ private struct ChatHeader: View {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
         .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
             Divider().opacity(0.45)

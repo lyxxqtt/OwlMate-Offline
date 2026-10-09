@@ -57,6 +57,7 @@ struct HistoryView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Chat History")
+        .navigationBarTitleDisplayMode(.large)
         .searchable(text: $searchText, prompt: "Search chats")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -136,8 +137,13 @@ private struct ConversationRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: isSelected ? "bubble.left.and.bubble.right.fill" : "bubble.left")
+                .font(.subheadline.weight(.semibold))
                 .foregroundStyle(isSelected ? AppTheme.accent : .secondary)
-                .frame(width: 24)
+                .frame(width: 34, height: 34)
+                .background(
+                    (isSelected ? AppTheme.lavenderSurface : AppTheme.surface),
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
 
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
@@ -155,7 +161,7 @@ private struct ConversationRow: View {
                     .lineLimit(2)
             }
         }
-        .padding(.vertical, 5)
+        .padding(.vertical, 7)
         .contentShape(Rectangle())
     }
 }
