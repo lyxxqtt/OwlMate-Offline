@@ -1,0 +1,302 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1BFA038330792B7C001B4090 /* SwiftLlama in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000081 /* SwiftLlama */; };
+		AA0000000000000000000011 /* OwlMateOfflineApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000001 /* OwlMateOfflineApp.swift */; };
+		AA0000000000000000000012 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000002 /* ContentView.swift */; };
+		AA0000000000000000000013 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000005 /* AppTheme.swift */; };
+		AA0000000000000000000014 /* OwlMateLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000006 /* OwlMateLogo.swift */; };
+		AA0000000000000000000015 /* DemoModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000007 /* DemoModels.swift */; };
+		AA0000000000000000000016 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000008 /* HomeView.swift */; };
+		AA0000000000000000000017 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000009 /* ChatView.swift */; };
+		AA0000000000000000000018 /* StudyToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000A /* StudyToolsView.swift */; };
+		AA0000000000000000000019 /* SavedMaterialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000B /* SavedMaterialsView.swift */; };
+		AA000000000000000000001A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000C /* SettingsView.swift */; };
+		AA000000000000000000001B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000D /* Assets.xcassets */; };
+		AA000000000000000000001C /* LocalAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000E /* LocalAIService.swift */; };
+		AA000000000000000000001D /* ModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000000F /* ModelManager.swift */; };
+		AA000000000000000000001E /* ConversationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000010 /* ConversationStore.swift */; };
+		AA000000000000000000001F /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000000000000000000020 /* HistoryView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA0000000000000000000001 /* OwlMateOfflineApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwlMateOfflineApp.swift; sourceTree = "<group>"; };
+		AA0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA0000000000000000000004 /* OwlMateOffline.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OwlMateOffline.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000005 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		AA0000000000000000000006 /* OwlMateLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwlMateLogo.swift; sourceTree = "<group>"; };
+		AA0000000000000000000007 /* DemoModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoModels.swift; sourceTree = "<group>"; };
+		AA0000000000000000000008 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		AA0000000000000000000009 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		AA000000000000000000000A /* StudyToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyToolsView.swift; sourceTree = "<group>"; };
+		AA000000000000000000000B /* SavedMaterialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMaterialsView.swift; sourceTree = "<group>"; };
+		AA000000000000000000000C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AA000000000000000000000D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000000000000000000000E /* LocalAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAIService.swift; sourceTree = "<group>"; };
+		AA000000000000000000000F /* ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManager.swift; sourceTree = "<group>"; };
+		AA0000000000000000000010 /* ConversationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStore.swift; sourceTree = "<group>"; };
+		AA0000000000000000000020 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA0000000000000000000021 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BFA038330792B7C001B4090 /* SwiftLlama in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA0000000000000000000031 = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000032 /* OwlMateOffline */,
+				AA0000000000000000000033 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000032 /* OwlMateOffline */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000001 /* OwlMateOfflineApp.swift */,
+				AA0000000000000000000002 /* ContentView.swift */,
+				AA0000000000000000000003 /* Info.plist */,
+				AA0000000000000000000005 /* AppTheme.swift */,
+				AA0000000000000000000006 /* OwlMateLogo.swift */,
+				AA0000000000000000000007 /* DemoModels.swift */,
+				AA0000000000000000000008 /* HomeView.swift */,
+				AA0000000000000000000009 /* ChatView.swift */,
+				AA000000000000000000000A /* StudyToolsView.swift */,
+				AA000000000000000000000B /* SavedMaterialsView.swift */,
+				AA000000000000000000000C /* SettingsView.swift */,
+				AA000000000000000000000D /* Assets.xcassets */,
+				AA000000000000000000000E /* LocalAIService.swift */,
+				AA000000000000000000000F /* ModelManager.swift */,
+				AA0000000000000000000010 /* ConversationStore.swift */,
+				AA0000000000000000000020 /* HistoryView.swift */,
+			);
+			path = OwlMateOffline;
+			sourceTree = "<group>";
+		};
+		AA0000000000000000000033 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000000000000000000004 /* OwlMateOffline.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA0000000000000000000041 /* OwlMateOffline */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0000000000000000000062 /* Build configuration list for PBXNativeTarget "OwlMateOffline" */;
+			buildPhases = (
+				AA0000000000000000000022 /* Sources */,
+				AA0000000000000000000021 /* Frameworks */,
+				AA0000000000000000000023 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OwlMateOffline;
+			packageProductDependencies = (
+				AA0000000000000000000081 /* SwiftLlama */,
+			);
+			productName = OwlMateOffline;
+			productReference = AA0000000000000000000004 /* OwlMateOffline.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0000000000000000000051 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					AA0000000000000000000041 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = AA0000000000000000000061 /* Build configuration list for PBXProject "OwlMateOffline" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0000000000000000000031;
+			packageReferences = (
+				AA0000000000000000000082 /* XCRemoteSwiftPackageReference "swift-llama-cpp" */,
+			);
+			productRefGroup = AA0000000000000000000033 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0000000000000000000041 /* OwlMateOffline */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0000000000000000000023 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000000000000000000001B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0000000000000000000022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0000000000000000000011 /* OwlMateOfflineApp.swift in Sources */,
+				AA0000000000000000000012 /* ContentView.swift in Sources */,
+				AA0000000000000000000013 /* AppTheme.swift in Sources */,
+				AA0000000000000000000014 /* OwlMateLogo.swift in Sources */,
+				AA0000000000000000000015 /* DemoModels.swift in Sources */,
+				AA0000000000000000000016 /* HomeView.swift in Sources */,
+				AA0000000000000000000017 /* ChatView.swift in Sources */,
+				AA0000000000000000000018 /* StudyToolsView.swift in Sources */,
+				AA0000000000000000000019 /* SavedMaterialsView.swift in Sources */,
+				AA000000000000000000001A /* SettingsView.swift in Sources */,
+				AA000000000000000000001C /* LocalAIService.swift in Sources */,
+				AA000000000000000000001D /* ModelManager.swift in Sources */,
+				AA000000000000000000001E /* ConversationStore.swift in Sources */,
+				AA000000000000000000001F /* HistoryView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA0000000000000000000071 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TXJM4HSVU;
+				INFOPLIST_FILE = OwlMateOffline/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.owlmate.offline;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA0000000000000000000072 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = 6TXJM4HSVU;
+				INFOPLIST_FILE = OwlMateOffline/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.owlmate.offline;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA0000000000000000000073 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		AA0000000000000000000074 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA0000000000000000000061 /* Build configuration list for PBXProject "OwlMateOffline" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000073 /* Debug */,
+				AA0000000000000000000074 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0000000000000000000062 /* Build configuration list for PBXNativeTarget "OwlMateOffline" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA0000000000000000000071 /* Debug */,
+				AA0000000000000000000072 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA0000000000000000000082 /* XCRemoteSwiftPackageReference "swift-llama-cpp" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pgorzelany/swift-llama-cpp";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AA0000000000000000000081 /* SwiftLlama */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0000000000000000000082 /* XCRemoteSwiftPackageReference "swift-llama-cpp" */;
+			productName = SwiftLlama;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = AA0000000000000000000051 /* Project object */;
+}
