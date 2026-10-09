@@ -13,19 +13,6 @@ OwlMate Offline is a personal AI study buddy for mobile learning. It lets users:
 
 The app is intentionally designed to be useful even when the network is unavailable once the local model has been downloaded and installed.
 
-## Why this qualifies as Local AI
-
-According to the hackathon brief, Local AI means that meaningful AI functionality runs on the user's device rather than depending entirely on cloud inference.
-
-OwlMate Offline follows that principle by:
-
-- downloading a local GGUF model
-- running inference on-device through SwiftLlama
-- keeping chat and model processing private to the device
-- allowing the experience to continue offline after setup
-
-This makes the app distinct from a cloud-only AI assistant that stops working when connectivity is lost.
-
 ## Features
 
 - Offline-first chat experience
