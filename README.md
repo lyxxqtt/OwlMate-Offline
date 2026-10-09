@@ -1,6 +1,6 @@
 # OwlMate - Offline
 
-Project overview
+##Project overview
 
 OwlMate Offline is a personal AI study buddy for mobile learning. It lets users:
 
