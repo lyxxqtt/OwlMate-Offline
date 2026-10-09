@@ -129,7 +129,7 @@ final class ModelManager {
     }
 }
 
-private final class ModelDownloadDelegate: NSObject, URLSessionDownloadDelegate {
+private final class ModelDownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
     let progress: @MainActor (Double) -> Void
     var continuation: CheckedContinuation<(URL, URLResponse), Error>?
     var task: URLSessionDownloadTask?

@@ -40,6 +40,7 @@ final class ChatViewModel {
     var readiness: ModelReadiness = .notDownloaded
     var isGenerating = false
     var errorMessage: String?
+    private(set) var failedPrompt: String?
 
     private let aiService = LocalAIService.shared
     private let store = ConversationStore.shared
@@ -87,7 +88,14 @@ final class ChatViewModel {
         guard !isGenerating else { return }
         conversations.removeAll()
         activeConversationID = nil
-        Task { try? await store.clear() }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await store.clear()
+            } catch {
+                self.errorMessage = "Unable to clear chat history: \(error.localizedDescription)"
+            }
+        }
     }
 
     func refreshReadiness() async {
@@ -121,21 +129,16 @@ final class ChatViewModel {
         draft = ""
         isGenerating = true
         errorMessage = nil
+        failedPrompt = nil
         persist()
 
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                let answer = try await aiService.generateAnswer(for: prompt)
-                guard activeConversationID == conversationID else { return }
-                append(ChatMessage(text: answer, isUser: false), to: conversationID)
-                persist()
-            } catch {
-                errorMessage = error.localizedDescription
-                readiness = .failed(error.localizedDescription)
-            }
-            isGenerating = false
-        }
+        generateAnswer(for: prompt, in: conversationID)
+    }
+
+    func retryLastRequest() {
+        guard let failedPrompt, let activeConversationID, !isGenerating else { return }
+        errorMessage = nil
+        generateAnswer(for: failedPrompt, in: activeConversationID)
     }
 
     func stop() {
@@ -157,6 +160,35 @@ final class ChatViewModel {
 
     private func persist() {
         let snapshot = conversations
-        Task { try? await store.save(snapshot) }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await store.save(snapshot)
+            } catch {
+                self.errorMessage = "Unable to save chat history: \(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func generateAnswer(for prompt: String, in conversationID: UUID) {
+        isGenerating = true
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let answer = try await aiService.generateAnswer(for: prompt)
+                if activeConversationID == conversationID {
+                    append(ChatMessage(text: answer, isUser: false), to: conversationID)
+                    failedPrompt = nil
+                    persist()
+                }
+            } catch {
+                if activeConversationID == conversationID {
+                    failedPrompt = prompt
+                    errorMessage = error.localizedDescription
+                    readiness = .failed(error.localizedDescription)
+                }
+            }
+            isGenerating = false
+        }
     }
 }
