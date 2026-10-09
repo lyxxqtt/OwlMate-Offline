@@ -345,23 +345,61 @@ private struct ChatMessageView: View {
 }
 
 private struct GenerationIndicator: View {
+    @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         HStack(alignment: .top, spacing: 11) {
-            OwlMateAvatar(size: 34)
-            HStack(spacing: 8) {
-                ProgressView()
-                    .controlSize(.small)
-                Text("Thinking")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.secondary)
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accent.opacity(0.14))
+                    .frame(width: 42, height: 42)
+                    .scaleEffect(pulse ? 1.16 : 0.86)
+                    .opacity(pulse ? 0.2 : 0.7)
+                OwlMateAvatar(size: 34)
+            }
+
+            HStack(spacing: 10) {
+                HStack(spacing: 4) {
+                    ForEach(0..<3, id: \.self) { index in
+                        Circle()
+                            .fill(AppTheme.accent)
+                            .frame(width: 5, height: 5)
+                            .scaleEffect(pulse ? 1 : 0.55)
+                            .opacity(pulse ? 1 : 0.35)
+                            .animation(
+                                reduceMotion
+                                ? nil
+                                : .easeInOut(duration: 0.55)
+                                    .repeatForever(autoreverses: true)
+                                    .delay(Double(index) * 0.14),
+                                value: pulse
+                            )
+                    }
+                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
-            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+            .background(
+                LinearGradient(
+                    colors: [AppTheme.cream, AppTheme.lavenderSurface],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: RoundedRectangle(cornerRadius: 17, style: .continuous)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 17, style: .continuous)
+                    .stroke(AppTheme.accent.opacity(0.14), lineWidth: 1)
+            }
             Spacer(minLength: 20)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("OwlMate is thinking")
+        .onAppear {
+            guard !reduceMotion else { return }
+            pulse = true
+        }
     }
 }
 

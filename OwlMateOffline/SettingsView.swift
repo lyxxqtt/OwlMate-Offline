@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Bindable var viewModel: ChatViewModel
+    let onShowTutorial: () -> Void
     @State private var modelManager = ModelManager.shared
     @State private var showingClearHistoryConfirmation = false
     @State private var showingTutorialResetChoice = false
@@ -13,7 +14,7 @@ struct SettingsView: View {
                     HStack(spacing: 14) {
                         OwlMateLogo(size: 54)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("OwlMate Offline")
+                            Text("OwlMate")
                                 .font(.title3.weight(.bold))
                             Text("Private study, wherever you are.")
                                 .font(.subheadline)
@@ -75,6 +76,7 @@ struct SettingsView: View {
                 Button("Yes, show tutorial") {
                     OnboardingStore.resetTutorial()
                     viewModel.clearAllConversations()
+                    onShowTutorial()
                 }
                 Button("No, keep tutorial completed") {
                     viewModel.clearAllConversations()

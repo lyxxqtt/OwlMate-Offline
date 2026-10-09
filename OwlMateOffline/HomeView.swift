@@ -4,6 +4,7 @@ struct HomeView: View {
     let onAskOwlMate: () -> Void
     let onSelectSuggestion: (String) -> Void
     @State private var modelManager = ModelManager.shared
+    @State private var contentVisible = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -34,6 +35,8 @@ struct HomeView: View {
                 .padding(.bottom, 28)
                 .frame(maxWidth: 560)
                 .frame(maxWidth: .infinity)
+                .opacity(contentVisible || reduceMotion ? 1 : 0)
+                .offset(y: contentVisible || reduceMotion ? 0 : 14)
             }
             .scrollIndicators(.hidden)
             .background {
@@ -47,6 +50,12 @@ struct HomeView: View {
             .navigationBarHidden(true)
             .task {
                 await modelManager.refresh()
+            }
+            .onAppear {
+                guard !contentVisible else { return }
+                withAnimation(reduceMotion ? nil : .spring(response: 0.6, dampingFraction: 0.86)) {
+                    contentVisible = true
+                }
             }
         }
     }
