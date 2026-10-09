@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import SwiftLlama
 
 enum ModelReadiness: Equatable {
     case notDownloaded
@@ -41,6 +42,7 @@ final class ChatViewModel {
     var isGenerating = false
     var errorMessage: String?
     private(set) var failedPrompt: String?
+    private var generationID: UUID?
 
     private let aiService = LocalAIService.shared
     private let store = ConversationStore.shared
@@ -56,27 +58,44 @@ final class ChatViewModel {
 
     init() {
         Task { @MainActor in
-            conversations = await store.load()
-            activeConversationID = conversations.first?.id
+            do {
+                conversations = try await store.load()
+                activeConversationID = conversations.first?.id
+            } catch {
+                errorMessage = "Unable to load chat history: \(error.localizedDescription)"
+            }
         }
     }
 
     func newConversation() {
-        guard !isGenerating else { return }
+        cancelActiveGeneration()
         activeConversationID = nil
         draft = ""
         errorMessage = nil
     }
 
     func select(_ conversation: Conversation) {
-        guard !isGenerating else { return }
+        cancelActiveGeneration()
         activeConversationID = conversation.id
         draft = ""
         errorMessage = nil
     }
 
-    func delete(_ conversation: Conversation) {
+    func rename(_ conversation: Conversation, to title: String) {
         guard !isGenerating else { return }
+        let cleanedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanedTitle.isEmpty,
+              let index = conversations.firstIndex(where: { $0.id == conversation.id }) else {
+            return
+        }
+        conversations[index].title = String(cleanedTitle.prefix(80))
+        persist()
+    }
+
+    func delete(_ conversation: Conversation) {
+        if activeConversationID == conversation.id {
+            cancelActiveGeneration()
+        }
         conversations.removeAll { $0.id == conversation.id }
         if activeConversationID == conversation.id {
             activeConversationID = conversations.first?.id
@@ -130,22 +149,23 @@ final class ChatViewModel {
         isGenerating = true
         errorMessage = nil
         failedPrompt = nil
+        let requestID = UUID()
+        generationID = requestID
         persist()
 
-        generateAnswer(for: prompt, in: conversationID)
+        generateAnswer(for: prompt, in: conversationID, requestID: requestID)
     }
 
     func retryLastRequest() {
         guard let failedPrompt, let activeConversationID, !isGenerating else { return }
         errorMessage = nil
-        generateAnswer(for: failedPrompt, in: activeConversationID)
+        let requestID = UUID()
+        generationID = requestID
+        generateAnswer(for: failedPrompt, in: activeConversationID, requestID: requestID)
     }
 
     func stop() {
-        Task {
-            await aiService.stopGeneration()
-            isGenerating = false
-        }
+        cancelActiveGeneration()
     }
 
     func sendOrStop() {
@@ -156,6 +176,18 @@ final class ChatViewModel {
         guard let index = conversations.firstIndex(where: { $0.id == conversationID }) else { return }
         conversations[index].messages.append(message)
         conversations[index].updatedAt = message.createdAt
+    }
+
+    private func cancelActiveGeneration() {
+        guard isGenerating else {
+            generationID = nil
+            return
+        }
+        generationID = nil
+        isGenerating = false
+        Task {
+            await aiService.stopGeneration()
+        }
     }
 
     private func persist() {
@@ -170,25 +202,64 @@ final class ChatViewModel {
         }
     }
 
-    private func generateAnswer(for prompt: String, in conversationID: UUID) {
+    private func generateAnswer(for prompt: String, in conversationID: UUID, requestID: UUID) {
         isGenerating = true
+        let context = contextMessages(for: conversationID)
         Task { [weak self] in
             guard let self else { return }
             do {
-                let answer = try await aiService.generateAnswer(for: prompt)
-                if activeConversationID == conversationID {
+                let answer = try await aiService.generateAnswer(for: context)
+                if activeConversationID == conversationID, generationID == requestID {
                     append(ChatMessage(text: answer, isUser: false), to: conversationID)
                     failedPrompt = nil
                     persist()
                 }
             } catch {
-                if activeConversationID == conversationID {
+                if activeConversationID == conversationID, generationID == requestID {
                     failedPrompt = prompt
                     errorMessage = error.localizedDescription
-                    readiness = .failed(error.localizedDescription)
+                    if let localError = error as? LocalAIError,
+                       case .modelNotInstalled = localError {
+                        readiness = .failed(error.localizedDescription)
+                    }
                 }
             }
-            isGenerating = false
+            if generationID == requestID {
+                isGenerating = false
+            }
         }
+    }
+
+    private func contextMessages(for conversationID: UUID) -> [LlamaChatMessage] {
+        let system = LlamaChatMessage(
+            role: .system,
+            content: "You are OwlMate, a careful and friendly offline study tutor. Explain clearly and acknowledge uncertainty."
+        )
+        guard let conversation = conversations.first(where: { $0.id == conversationID }) else {
+            return [system]
+        }
+        let budget = 11_000
+        var used = 0
+        var selected: [LlamaChatMessage] = []
+        for message in conversation.messages.reversed() {
+            let content = message.text
+            if used + content.count > budget {
+                if selected.isEmpty {
+                    let truncated = String(content.prefix(budget))
+                    selected.append(
+                        LlamaChatMessage(
+                            role: message.isUser ? .user : .assistant,
+                            content: truncated
+                        )
+                    )
+                }
+                break
+            }
+            selected.append(
+                LlamaChatMessage(role: message.isUser ? .user : .assistant, content: content)
+            )
+            used += content.count
+        }
+        return [system] + selected.reversed()
     }
 }

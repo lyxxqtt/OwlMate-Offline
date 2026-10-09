@@ -180,8 +180,8 @@ private struct OfflineStatusCard: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if case .notInstalled = state {
-                    Button("Set up offline AI", action: setupAction)
+                if needsSetup {
+                    Button(buttonTitle, action: setupAction)
                         .font(.caption.weight(.semibold))
                         .buttonStyle(.borderedProminent)
                         .controlSize(.small)
@@ -241,6 +241,22 @@ private struct OfflineStatusCard: View {
         case .notInstalled:
             "Download the model once to use OwlMate without internet."
         }
+    }
+
+    private var needsSetup: Bool {
+        switch state {
+        case .notInstalled, .failed:
+            return true
+        case .downloading, .loading, .ready:
+            return false
+        }
+    }
+
+    private var buttonTitle: String {
+        if case .failed = state {
+            return "Retry setup"
+        }
+        return "Set up offline AI"
     }
 }
 

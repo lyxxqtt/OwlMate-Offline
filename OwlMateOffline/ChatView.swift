@@ -18,7 +18,7 @@ struct ChatView: View {
                     title: viewModel.activeConversation?.title ?? "OwlMate",
                     isReady: modelManager.isReady,
                     readiness: viewModel.readiness,
-                    canSetUp: isModelNotInstalled,
+                    canSetUp: needsModelSetup,
                     setupAction: modelManager.install
                 )
 
@@ -49,7 +49,7 @@ struct ChatView: View {
                 } label: {
                     Image(systemName: "square.and.pencil")
                 }
-                .disabled(viewModel.messages.isEmpty || viewModel.isGenerating)
+                .disabled(viewModel.messages.isEmpty)
                 .accessibilityLabel("New chat")
             }
         }
@@ -125,11 +125,13 @@ struct ChatView: View {
         }
     }
 
-    private var isModelNotInstalled: Bool {
-        if case .notInstalled = modelManager.state {
+    private var needsModelSetup: Bool {
+        switch modelManager.state {
+        case .notInstalled, .failed:
             return true
+        case .downloading, .loading, .ready:
+            return false
         }
-        return false
     }
 
     private func scrollToLatest(using proxy: ScrollViewProxy) {

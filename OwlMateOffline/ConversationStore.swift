@@ -39,22 +39,24 @@ actor ConversationStore {
         return directory.appendingPathComponent("OwlMateConversation.json")
     }()
 
-    func load() -> [Conversation] {
-        if let data = try? Data(contentsOf: fileURL),
-           let conversations = try? JSONDecoder().decode([Conversation].self, from: data) {
+    func load() throws -> [Conversation] {
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            let data = try Data(contentsOf: fileURL)
+            let conversations = try JSONDecoder().decode([Conversation].self, from: data)
             return conversations.sorted { $0.updatedAt > $1.updatedAt }
         }
 
-        guard let data = try? Data(contentsOf: legacyFileURL),
-              let messages = try? JSONDecoder().decode([ChatMessage].self, from: data),
-              !messages.isEmpty else {
+        guard FileManager.default.fileExists(atPath: legacyFileURL.path) else {
             return []
         }
+        let data = try Data(contentsOf: legacyFileURL)
+        let messages = try JSONDecoder().decode([ChatMessage].self, from: data)
+        guard !messages.isEmpty else { return [] }
         let migrated = Conversation(
             title: Conversation.title(for: messages.first?.text),
             messages: messages
         )
-        try? save([migrated])
+        try save([migrated])
         return [migrated]
     }
 
@@ -66,8 +68,9 @@ actor ConversationStore {
     }
 
     func clear() throws {
-        try? FileManager.default.removeItem(at: fileURL)
-        try? FileManager.default.removeItem(at: legacyFileURL)
+        for url in [fileURL, legacyFileURL] where FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.removeItem(at: url)
+        }
     }
 }
 

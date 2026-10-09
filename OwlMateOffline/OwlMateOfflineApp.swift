@@ -4,7 +4,7 @@ import SwiftUI
 struct OwlMateOfflineApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppLaunchView()
         }
     }
 }

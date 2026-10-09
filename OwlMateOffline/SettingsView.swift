@@ -4,6 +4,7 @@ struct SettingsView: View {
     @Bindable var viewModel: ChatViewModel
     @State private var modelManager = ModelManager.shared
     @State private var showingClearHistoryConfirmation = false
+    @State private var showingTutorialResetChoice = false
 
     var body: some View {
         NavigationStack {
@@ -15,7 +16,9 @@ struct SettingsView: View {
                         ProgressView(value: progress)
                         Button("Cancel download") { modelManager.cancel() }
                     } else if !modelManager.isReady {
-                        Button("Set up local model") { modelManager.install() }
+                        Button(modelManager.state.isFailure ? "Retry model setup" : "Set up local model") {
+                            modelManager.install()
+                        }
                     }
                 }
                 Section("Privacy") {
@@ -46,12 +49,28 @@ struct SettingsView: View {
                 isPresented: $showingClearHistoryConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Clear All", role: .destructive) {
+                Button("Continue", role: .destructive) {
+                    showingTutorialResetChoice = true
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This permanently removes all locally saved chats. Your model and app settings will be preserved.")
+            }
+            .confirmationDialog(
+                "Show the tutorial next time?",
+                isPresented: $showingTutorialResetChoice,
+                titleVisibility: .visible
+            ) {
+                Button("Yes, show tutorial") {
+                    OnboardingStore.resetTutorial()
+                    viewModel.clearAllConversations()
+                }
+                Button("No, keep tutorial completed") {
                     viewModel.clearAllConversations()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This permanently removes all locally saved chats.")
+                Text("Would you like to show the tutorial guide again the next time you open the app?")
             }
         }
     }
@@ -64,5 +83,12 @@ struct SettingsView: View {
         case .ready: "Ready offline"
         case .failed: "Unavailable"
         }
+    }
+}
+
+private extension ModelManager.State {
+    var isFailure: Bool {
+        if case .failed = self { return true }
+        return false
     }
 }

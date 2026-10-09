@@ -6,6 +6,7 @@ enum ModelManagerError: LocalizedError {
     case invalidSize
     case checksumMismatch
     case downloadFailed
+    case fileOperation(String)
 
     var errorDescription: String? {
         switch self {
@@ -15,6 +16,8 @@ enum ModelManagerError: LocalizedError {
             "The downloaded model failed integrity verification."
         case .downloadFailed:
             "The model download could not be completed."
+        case .fileOperation(let details):
+            "The model file could not be installed: \(details)"
         }
     }
 }
@@ -40,6 +43,7 @@ final class ModelManager {
     private let expectedSHA256 = "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
     private let sourceURL = URL(string: "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf?download=true")!
     private var downloadTask: Task<Void, Never>?
+    private var isRefreshing = false
 
     var isReady: Bool {
         if case .ready = state { return true }
@@ -47,9 +51,15 @@ final class ModelManager {
     }
 
     func refresh() async {
-        if await LocalAIService.shared.isModelInstalled() {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
+
+        let modelURL = await LocalAIService.shared.modelURL
+        if FileManager.default.fileExists(atPath: modelURL.path) {
             state = .loading
             do {
+                try validate(modelURL)
                 try await LocalAIService.shared.loadInstalledModel()
                 state = .ready
             } catch {
@@ -90,14 +100,18 @@ final class ModelManager {
         let directory = await LocalAIService.shared.modelDirectory
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let destination = await LocalAIService.shared.modelURL
-        let temporary = directory.appendingPathComponent("model.download")
-        try? FileManager.default.removeItem(at: temporary)
+        let staging = directory.appendingPathComponent("\(UUID().uuidString).download")
+        removeIfPresent(staging)
 
-        let delegate = ModelDownloadDelegate { [weak self] fraction in
+        let delegate = ModelDownloadDelegate(stagingURL: staging) { [weak self] fraction in
             Task { @MainActor in self?.state = .downloading(fraction) }
         }
-        let session = URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
-        let (temporaryURL, response): (URL, URLResponse) = try await withTaskCancellationHandler {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 60
+        configuration.timeoutIntervalForResource = 3_600
+        configuration.waitsForConnectivity = true
+        let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let (stagedURL, response): (URL, URLResponse) = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
                 delegate.continuation = continuation
                 delegate.task = session.downloadTask(with: sourceURL)
@@ -108,11 +122,17 @@ final class ModelManager {
         }
         session.finishTasksAndInvalidate()
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            removeIfPresent(stagedURL)
             throw ModelManagerError.downloadFailed
         }
-        try FileManager.default.moveItem(at: temporaryURL, to: temporary)
-        try? FileManager.default.removeItem(at: destination)
-        try FileManager.default.moveItem(at: temporary, to: destination)
+        try validate(stagedURL)
+        removeIfPresent(destination)
+        do {
+            try FileManager.default.moveItem(at: stagedURL, to: destination)
+        } catch {
+            removeIfPresent(stagedURL)
+            throw ModelManagerError.fileOperation(error.localizedDescription)
+        }
         return destination
     }
 
@@ -127,14 +147,21 @@ final class ModelManager {
             throw ModelManagerError.checksumMismatch
         }
     }
+
+    private func removeIfPresent(_ url: URL) {
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
 }
 
 private final class ModelDownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
+    let stagingURL: URL
     let progress: @MainActor (Double) -> Void
     var continuation: CheckedContinuation<(URL, URLResponse), Error>?
     var task: URLSessionDownloadTask?
 
-    init(progress: @escaping @MainActor (Double) -> Void) {
+    init(stagingURL: URL, progress: @escaping @MainActor (Double) -> Void) {
+        self.stagingURL = stagingURL
         self.progress = progress
     }
 
@@ -155,7 +182,13 @@ private final class ModelDownloadDelegate: NSObject, URLSessionDownloadDelegate,
         downloadTask: URLSessionDownloadTask,
         didFinishDownloadingTo location: URL
     ) {
-        continuation?.resume(returning: (location, downloadTask.response ?? URLResponse()))
+        do {
+            try? FileManager.default.removeItem(at: stagingURL)
+            try FileManager.default.moveItem(at: location, to: stagingURL)
+            continuation?.resume(returning: (stagingURL, downloadTask.response ?? URLResponse()))
+        } catch {
+            continuation?.resume(throwing: ModelManagerError.fileOperation(error.localizedDescription))
+        }
         continuation = nil
     }
 
